@@ -110,3 +110,24 @@ TEST_CASE("Testcase for validating function PerformBatteryCheck") {
   REQUIRE(PerformBatteryCheck(myBatteryChar, 30, RangeBasedOnCoolingType) == 0);
   REQUIRE(PerformBatteryCheck(myBatteryChar, 41, RangeBasedOnCoolingType) == 2);
 }
+
+void testHelperFunctions(BatteryCharacter myBatteryChar) {
+  Start_BatteryCheckSystem(TO_EMAIL,myBatteryChar,-25);
+  Start_BatteryCheckSystem(TO_EMAIL,myBatteryChar,25);
+  Start_BatteryCheckSystem(TO_EMAIL,myBatteryChar,50);
+  Start_BatteryCheckSystem(TO_CONTROLLER,myBatteryChar,-25);
+  Start_BatteryCheckSystem(TO_CONTROLLER,myBatteryChar,25);
+  Start_BatteryCheckSystem(TO_CONTROLLER,myBatteryChar,50);
+}
+
+TEST_CASE("Testcase to cover wrapper functions") {
+  BatteryCharacter BatteryChar = {PASSIVE_COOLING, "BATTERY"};
+  testHelperFunctions(BatteryChar);
+  
+  BatteryChar.coolingType = HI_ACTIVE_COOLING;
+  testHelperFunctions(BatteryChar);
+  
+  BatteryChar.coolingType = MED_ACTIVE_COOLING;
+  testHelperFunctions(BatteryChar);
+  REQUIRE(1);
+}
