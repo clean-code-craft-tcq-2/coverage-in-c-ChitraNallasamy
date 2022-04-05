@@ -41,4 +41,4 @@ void prepareAlertTextForController(BreachType breachType);
 void prepareAlertTextForEmail(BreachType breachType);
 void printOnConsole(char *stringToBePrinted);
 BreachType PerformBatteryCheck(BatteryCharacter batteryChar, double temperatureInC, int RangeBasedOnCoolingType[][TEMPERATURE_LIMITS]);
-void Initialize_and_Start_BatteryCheckSystem (AlertTarget currentAlertTarget, BatteryCharacter batteryChar, double temperatureInC);
+void Start_BatteryCheckSystem (AlertTarget currentAlertTarget, BatteryCharacter batteryChar, double temperatureInC);
