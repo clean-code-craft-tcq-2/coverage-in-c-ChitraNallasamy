@@ -16,7 +16,15 @@ TEST_CASE("Testcase for valid limit") {
   REQUIRE(inferBreach(25, 20, 30) == NORMAL);
 }
 
-TEST_CASE("Testcase for retreiving the limits") {
+TEST_CASE("Testcase for valid limit") {
+  REQUIRE(inferBreach(20, 20, 30) == NORMAL);
+}
+
+TEST_CASE("Testcase for valid limit") {
+  REQUIRE(inferBreach(30, 20, 30) == NORMAL);
+}
+
+TEST_CASE("Testcase for retreiving the limits - TOO HIGH") {
   BatteryCharacter myBatteryChar = {PASSIVE_COOLING, "EXIDE"};
   double temperatureInC = 50;
   int RangeBasedOnCoolingType[COOLING_TYPES][TEMPERATURE_LIMITS] = {{PASSIVE_COOLING_LOWER_LIMIT, PASSIVE_COOLING_UPPER_LIMIT}, 
@@ -26,9 +34,58 @@ TEST_CASE("Testcase for retreiving the limits") {
   REQUIRE(classifyTemperatureBreach(RangeBasedOnCoolingType, myBatteryChar.coolingType, temperatureInC) == TOO_HIGH);
 }
 
-TEST_CASE("Testcase for AlertTextFormatters in Email Target") {
-  char TestAlertMessage[44] = "";
-  char ExpectedAlertMessage[] = "a.b@c.com : Hi, the temperature is too low";
-  prepareAlertTextForEmail(TOO_LOW, TestAlertMessage);
-  REQUIRE(!strcmp(TestAlertMessage,ExpectedAlertMessage));
+TEST_CASE("Testcase for retreiving the limits - NORMAL") {
+  BatteryCharacter myBatteryChar = {HI_ACTIVE_COOLING, "EXIDE"};
+  double temperatureInC = 30;
+  int RangeBasedOnCoolingType[COOLING_TYPES][TEMPERATURE_LIMITS] = {{PASSIVE_COOLING_LOWER_LIMIT, PASSIVE_COOLING_UPPER_LIMIT}, 
+                                                                    {HI_ACTIVE_COOLING_LOWER_LIMIT, HI_ACTIVE_COOLING_UPPER_LIMIT}, 
+                                                                    {MED_ACTIVE_COOLING_LOWER_LIMIT, MED_ACTIVE_COOLING_UPPER_LIMIT}};
+  
+  REQUIRE(classifyTemperatureBreach(RangeBasedOnCoolingType, myBatteryChar.coolingType, temperatureInC) == NORMAL);
+}
+
+TEST_CASE("Testcase for retreiving the limits - TOO LOW") {
+  BatteryCharacter myBatteryChar = {MED_ACTIVE_COOLING, "EXIDE"};
+  double temperatureInC = 8;
+  int RangeBasedOnCoolingType[COOLING_TYPES][TEMPERATURE_LIMITS] = {{PASSIVE_COOLING_LOWER_LIMIT, PASSIVE_COOLING_UPPER_LIMIT}, 
+                                                                    {HI_ACTIVE_COOLING_LOWER_LIMIT, HI_ACTIVE_COOLING_UPPER_LIMIT}, 
+                                                                    {MED_ACTIVE_COOLING_LOWER_LIMIT, MED_ACTIVE_COOLING_UPPER_LIMIT}};
+  
+  REQUIRE(classifyTemperatureBreach(RangeBasedOnCoolingType, myBatteryChar.coolingType, temperatureInC) == TOO_LOW);
+}
+
+TEST_CASE("Testcase for Alert Text Formatters in Controller Target - NORMAL") {
+  char AlertMessage[] = "feed : 0";
+  prepareAlertTextForController(NORMAL);
+  REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
+}
+
+TEST_CASE("Testcase for Alert Text Formatters in Controller Target - TOO_LOW") {
+  char AlertMessage[] = "feed : 1";
+  prepareAlertTextForController(TOO_LOW);
+  REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
+}
+
+TEST_CASE("Testcase for Alert Text Formatters in Controller Target - TOO_HIGH") {
+  char AlertMessage[] = "feed : 2";
+  prepareAlertTextForController(TOO_HIGH);
+  REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
+}
+
+TEST_CASE("Testcase for Alert Text Formatters in Email Target - TOO_LOW") {
+  char AlertMessage[] = "c.d@c.com : Hi, the temperature is too low";
+  prepareAlertTextForEmail(TOO_LOW);
+  REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
+}
+
+TEST_CASE("Testcase for Alert Text Formatters in Email Target_NORMAL") {
+  char AlertMessage[] = "c.d@c.com : Hi, the temperature is normal";
+  prepareAlertTextForEmail(NORMAL);
+  REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
+}
+
+TEST_CASE("Testcase for Alert Text Formatters in Email Target_TOO-HIGH") {
+  char AlertMessage[] = "c.d@c.com : Hi, the temperature is too High";
+  prepareAlertTextForEmail(TOO_HIGH);
+  REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
 }
