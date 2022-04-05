@@ -43,18 +43,12 @@ BreachType PerformBatteryCheck(BatteryCharacter batteryChar, double temperatureI
     return classifyTemperatureBreach(RangeBasedOnCoolingType, batteryChar.coolingType, temperatureInC);
 }
 
-void Initialize_and_Start_BatteryCheckSystem (AlertTarget currentAlertTarget, BatteryCharacter batteryChar, double temperatureInC) {
-    /* Initialize parameters*/
-    void (*pointerToAlertingOptions[]) (BreachType, char *) = {prepareAlertTextForController,prepareAlertTextForEmail};
-    int RangeBasedOnCoolingType[COOLING_TYPES][TEMPERATURE_LIMITS] = {{PASSIVE_COOLING_LOWER_LIMIT, PASSIVE_COOLING_UPPER_LIMIT}, 
-                                                                      {HI_ACTIVE_COOLING_LOWER_LIMIT, HI_ACTIVE_COOLING_UPPER_LIMIT}, 
-                                                                      {MED_ACTIVE_COOLING_LOWER_LIMIT, MED_ACTIVE_COOLING_UPPER_LIMIT}};
-    
-    /* Start the System */
-    BreachType breachType = PerformBatteryCheck(batteryChar, temperatureInC, RangeBasedOnCoolingType);
-    
-    /* Provide Alert on the requested Target*/
-    char MessageToBeDisplayedOnConsole[44] = "";
-    pointerToAlertingOptions[currentAlertTarget](breachType, MessageToBeDisplayedOnConsole);
-    printOnConsole(MessageToBeDisplayedOnConsole);
+void alertAndPrint(AlertTarget currentAlertTarget, BreachType breachType) {
+  /* Provide Alert on the requested Target*/
+  pointerToAlertingOptions[currentAlertTarget](breachType); // Function Pointers of different targets
+  (void) printOnConsole(MessageToBeDisplayedOnConsole);
+}
+
+void Start_BatteryCheckSystem (AlertTarget currentAlertTarget, BatteryCharacter batteryChar, double temperatureInC) {     
+    (void) alertAndPrint(currentAlertTarget,PerformBatteryCheck(batteryChar, temperatureInC, RangeBasedOnCoolingType));
 }
