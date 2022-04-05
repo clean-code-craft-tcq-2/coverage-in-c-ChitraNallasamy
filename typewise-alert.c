@@ -1,5 +1,12 @@
 #include "typewise-alert.h"
 #include <stdio.h>
+#include <string.h>
+
+char MessageToBeDisplayedOnConsole[44] = "";
+void (*pointerToAlertingOptions[]) (BreachType) = {prepareAlertTextForController,prepareAlertTextForEmail};
+int RangeBasedOnCoolingType[COOLING_TYPES][TEMPERATURE_LIMITS] = {{PASSIVE_COOLING_LOWER_LIMIT, PASSIVE_COOLING_UPPER_LIMIT}, 
+                                                                  {HI_ACTIVE_COOLING_LOWER_LIMIT, HI_ACTIVE_COOLING_UPPER_LIMIT}, 
+                                                                  {MED_ACTIVE_COOLING_LOWER_LIMIT, MED_ACTIVE_COOLING_UPPER_LIMIT}};
 
 BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
   if(value < lowerLimit) {
@@ -11,61 +18,41 @@ BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
   return NORMAL;
 }
 
-BreachType classifyTemperatureBreach(
-    CoolingType coolingType, double temperatureInC) {
-  int lowerLimit = 0;
-  int upperLimit = 0;
-  switch(coolingType) {
-    case PASSIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 35;
-      break;
-    case HI_ACTIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 45;
-      break;
-    case MED_ACTIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 40;
-      break;
-  }
+BreachType classifyTemperatureBreach(int MapForCoolingTypeVsRange[][TEMPERATURE_LIMITS], CoolingType coolingType, double temperatureInC) {
+  int lowerLimit = MapForCoolingTypeVsRange[coolingType][LOWER_LIMIT_IN_MAP];
+  int upperLimit = MapForCoolingTypeVsRange[coolingType][UPPER_LIMIT_IN_MAP];
+
   return inferBreach(temperatureInC, lowerLimit, upperLimit);
 }
 
-void checkAndAlert(
-    AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC) {
-
-  BreachType breachType = classifyTemperatureBreach(
-    batteryChar.coolingType, temperatureInC
-  );
-
-  switch(alertTarget) {
-    case TO_CONTROLLER:
-      sendToController(breachType);
-      break;
-    case TO_EMAIL:
-      sendToEmail(breachType);
-      break;
-  }
-}
-
-void sendToController(BreachType breachType) {
+void prepareAlertTextForController(BreachType breachType) {
   const unsigned short header = 0xfeed;
-  printf("%x : %x\n", header, breachType);
+  snprintf(MessageToBeDisplayedOnConsole,10,"%x : %x", header, breachType);
 }
 
-void sendToEmail(BreachType breachType) {
-  const char* recepient = "a.b@c.com";
-  switch(breachType) {
-    case TOO_LOW:
-      printf("To: %s\n", recepient);
-      printf("Hi, the temperature is too low\n");
-      break;
-    case TOO_HIGH:
-      printf("To: %s\n", recepient);
-      printf("Hi, the temperature is too high\n");
-      break;
-    case NORMAL:
-      break;
-  }
+void prepareAlertTextForEmail(BreachType breachType) {
+   char recepient[] = "c.d@c.com";
+   char AlertMessagesForEmail[][32] = {"Hi, the temperature is Normal",
+                                       "Hi, the temperature is too low", 
+                                       "Hi, the temperature is too high"};
+
+   snprintf(MessageToBeDisplayedOnConsole,44,"%s : %s",recepient,&(AlertMessagesForEmail[breachType][0]));
+}
+
+void printOnConsole(char *stringToBePrinted) {
+    printf("%s",stringToBePrinted);
+}
+
+BreachType PerformBatteryCheck(BatteryCharacter batteryChar, double temperatureInC, int RangeBasedOnCoolingType[][TEMPERATURE_LIMITS]) {
+    return classifyTemperatureBreach(RangeBasedOnCoolingType, batteryChar.coolingType, temperatureInC);
+}
+
+void alertAndPrint(AlertTarget currentAlertTarget, BreachType breachType) {
+  /* Provide Alert on the requested Target*/
+  pointerToAlertingOptions[currentAlertTarget](breachType); // Function Pointers of different targets
+  (void) printOnConsole(MessageToBeDisplayedOnConsole);
+}
+
+void Start_BatteryCheckSystem (AlertTarget currentAlertTarget, BatteryCharacter batteryChar, double temperatureInC) {     
+    (void) alertAndPrint(currentAlertTarget,PerformBatteryCheck(batteryChar, temperatureInC, RangeBasedOnCoolingType));
 }
