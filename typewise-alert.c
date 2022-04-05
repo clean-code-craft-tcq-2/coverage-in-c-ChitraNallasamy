@@ -24,13 +24,13 @@ void prepareAlertTextForController(BreachType breachType) {
   snprintf(MessageToBeDisplayedOnConsole,10,"%x : %x", header, breachType);
 }
 
-void prepareAlertTextForEmail(BreachType breachType, char AlertMessage[44]) {
-   char recepient[] = "a.b@c.com";
+void prepareAlertTextForEmail(BreachType breachType) {
+   char recepient[] = "c.d@c.com";
    char AlertMessagesForEmail[][32] = {"Hi, the temperature is Normal",
                                        "Hi, the temperature is too low", 
                                        "Hi, the temperature is too high"};
 
-   snprintf(AlertMessage,44,"%s : %s",recepient,&(AlertMessagesForEmail[breachType][0]));
+   snprintf(MessageToBeDisplayedOnConsole,44,"%s : %s",recepient,&(AlertMessagesForEmail[breachType][0]));
 }
 
 void printOnConsole(char *stringToBePrinted) {
