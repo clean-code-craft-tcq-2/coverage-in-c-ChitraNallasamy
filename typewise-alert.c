@@ -3,6 +3,10 @@
 #include <string.h>
 
 char MessageToBeDisplayedOnConsole[44] = "";
+void (*pointerToAlertingOptions[]) (BreachType) = {prepareAlertTextForController,prepareAlertTextForEmail};
+int RangeBasedOnCoolingType[COOLING_TYPES][TEMPERATURE_LIMITS] = {{PASSIVE_COOLING_LOWER_LIMIT, PASSIVE_COOLING_UPPER_LIMIT}, 
+                                                                  {HI_ACTIVE_COOLING_LOWER_LIMIT, HI_ACTIVE_COOLING_UPPER_LIMIT}, 
+                                                                  {MED_ACTIVE_COOLING_LOWER_LIMIT, MED_ACTIVE_COOLING_UPPER_LIMIT}};
 
 BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
   if(value < lowerLimit) {
