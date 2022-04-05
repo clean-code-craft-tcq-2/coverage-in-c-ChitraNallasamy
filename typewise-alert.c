@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+char MessageToBeDisplayedOnConsole[44] = "";
+
 BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
   if(value < lowerLimit) {
     return TOO_LOW;
