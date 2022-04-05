@@ -12,15 +12,15 @@ TEST_CASE("Testcase for breaching HigherLimit") {
   REQUIRE(inferBreach(31, 20, 30) == TOO_HIGH);
 }
 
-TEST_CASE("Testcase for valid limit") {
+TEST_CASE("Testcase1 for valid limit") {
   REQUIRE(inferBreach(25, 20, 30) == NORMAL);
 }
 
-TEST_CASE("Testcase for valid limit") {
+TEST_CASE("Testcase2 for valid limit") {
   REQUIRE(inferBreach(20, 20, 30) == NORMAL);
 }
 
-TEST_CASE("Testcase for valid limit") {
+TEST_CASE("Testcase3 for valid limit") {
   REQUIRE(inferBreach(30, 20, 30) == NORMAL);
 }
 
