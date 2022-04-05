@@ -89,3 +89,24 @@ TEST_CASE("Testcase for Alert Text Formatters in Email Target_TOO-HIGH") {
   prepareAlertTextForEmail(TOO_HIGH);
   REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
 }
+
+TEST_CASE("Testcase for validating function PerformBatteryCheck") {
+  BatteryCharacter myBatteryChar = {PASSIVE_COOLING, "EXIDE"};
+  int RangeBasedOnCoolingType[COOLING_TYPES][TEMPERATURE_LIMITS] = {{PASSIVE_COOLING_LOWER_LIMIT, PASSIVE_COOLING_UPPER_LIMIT}, 
+                                                                    {HI_ACTIVE_COOLING_LOWER_LIMIT, HI_ACTIVE_COOLING_UPPER_LIMIT}, 
+                                                                    {MED_ACTIVE_COOLING_LOWER_LIMIT, MED_ACTIVE_COOLING_UPPER_LIMIT}};
+  
+  REQUIRE(PerformBatteryCheck(myBatteryChar, -10, RangeBasedOnCoolingType) == 1);
+  REQUIRE(PerformBatteryCheck(myBatteryChar, 30, RangeBasedOnCoolingType) == 0);
+  REQUIRE(PerformBatteryCheck(myBatteryChar, 40, RangeBasedOnCoolingType) == 2);
+  
+  myBatteryChar.coolingType = HI_ACTIVE_COOLING;
+  REQUIRE(PerformBatteryCheck(myBatteryChar, -10, RangeBasedOnCoolingType) == 1);
+  REQUIRE(PerformBatteryCheck(myBatteryChar, 30, RangeBasedOnCoolingType) == 0);
+  REQUIRE(PerformBatteryCheck(myBatteryChar, 50, RangeBasedOnCoolingType) == 2);
+  
+  myBatteryChar.coolingType = MED_ACTIVE_COOLING;
+  REQUIRE(PerformBatteryCheck(myBatteryChar, -10, RangeBasedOnCoolingType) == 1);
+  REQUIRE(PerformBatteryCheck(myBatteryChar, 30, RangeBasedOnCoolingType) == 0);
+  REQUIRE(PerformBatteryCheck(myBatteryChar, 41, RangeBasedOnCoolingType) == 2);
+}
