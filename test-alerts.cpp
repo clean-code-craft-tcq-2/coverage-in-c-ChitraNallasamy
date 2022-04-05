@@ -79,13 +79,13 @@ TEST_CASE("Testcase for Alert Text Formatters in Email Target - TOO_LOW") {
 }
 
 TEST_CASE("Testcase for Alert Text Formatters in Email Target_NORMAL") {
-  char AlertMessage[] = "c.d@c.com : Hi, the temperature is normal";
+  char AlertMessage[] = "c.d@c.com : Hi, the temperature is Normal";
   prepareAlertTextForEmail(NORMAL);
   REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
 }
 
 TEST_CASE("Testcase for Alert Text Formatters in Email Target_TOO-HIGH") {
-  char AlertMessage[] = "c.d@c.com : Hi, the temperature is too High";
+  char AlertMessage[] = "c.d@c.com : Hi, the temperature is too high";
   prepareAlertTextForEmail(TOO_HIGH);
   REQUIRE(!strcmp(MessageToBeDisplayedOnConsole,AlertMessage));
 }
